@@ -1,0 +1,76 @@
+{{> navigation}}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="/css/custom.css">
+    
+    <div class="container mt-5">
+        <div class="row mb-4">
+            <div class="col">
+                <h1><i class="fas fa-file-invoice me-2"></i>Rechnungen</h1>
+                <p class="text-muted">Übersicht aller Bestellungen und Abonnements</p>
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Bestell-ID</th>
+                                <th>Kunde</th>
+                                <th>Betrag</th>
+                                <th>Typ</th>
+                                <th>Status</th>
+                                <th>Datum</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#if orders}}
+                                {{#each orders}}
+                                <tr>
+                                    <td><code>{{this._id}}</code></td>
+                                    <td>{{this.customerEmail}}</td>
+                                    <td><strong>{{this.amount}} {{this.currency}}</strong></td>
+                                    <td>
+                                        {{#if (eq this.type 'subscription')}}
+                                            <span class="badge bg-primary">Abonnement</span>
+                                        {{else}}
+                                            <span class="badge bg-secondary">Einmalzahlung</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if (eq this.status 'active')}}
+                                            <span class="badge bg-success">Aktiv</span>
+                                        {{else if (eq this.status 'pending')}}
+                                            <span class="badge bg-warning">Ausstehend</span>
+                                        {{else if (eq this.status 'cancelled')}}
+                                            <span class="badge bg-danger">Storniert</span>
+                                        {{else}}
+                                            <span class="badge bg-secondary">{{this.status}}</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>{{#if this.createdAt}}{{this.createdAt}}{{else}}N/A{{/if}}</td>
+                                    <td>
+                                        <a href="/admin/rechnungen/{{this._id}}" class="btn btn-sm btn-info">
+                                            <i class="fas fa-receipt"></i> Rechnung
+                                        </a>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            {{else}}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">
+                                        Keine Bestellungen gefunden
+                                    </td>
+                                </tr>
+                            {{/if}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{> footer}}

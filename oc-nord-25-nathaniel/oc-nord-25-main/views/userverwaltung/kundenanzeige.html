@@ -1,0 +1,193 @@
+{{> navigation}}
+
+<link rel="stylesheet" href="/css/custom.css">
+    
+    <div class="container mt-5">
+        <h1 class="mb-4">Kundenanzeige</h1>
+        
+        <!-- Success/Error Meldungen -->
+        {{#if success}}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{success}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {{/if}}
+        
+        {{#if error}}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{error}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {{/if}}
+        
+        <!-- Sortier-Buttons -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Sortieren nach:</h5>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary {{#if (eq sortBy 'name')}}active{{/if}}" 
+                            onclick="sortBy('name')">
+                        Name
+                    </button>
+                    <button type="button" class="btn btn-outline-primary {{#if (eq sortBy 'eintrittsdatum')}}active{{/if}}" 
+                            onclick="sortBy('eintrittsdatum')">
+                        Eintrittsdatum
+                    </button>
+                    <button type="button" class="btn btn-outline-primary {{#if (eq sortBy 'ablaufdatum')}}active{{/if}}" 
+                            onclick="sortBy('ablaufdatum')">
+                        Ablaufdatum
+                    </button>
+                </div>
+                
+                <!-- Reihenfolge ändern -->
+                <button type="button" class="btn btn-outline-secondary ms-3" onclick="toggleSortOrder()">
+                    {{#if (eq sortOrder 'asc')}}
+                        ↑ Aufsteigend
+                    {{else}}
+                        ↓ Absteigend
+                    {{/if}}
+                </button>
+            </div>
+        </div>
+        
+        <!-- Kunden-Tabelle -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Alle Kunden ({{customers.length}})</h5>
+                
+                {{#if customers}}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Eintrittsdatum</th>
+                                    <th>Ablaufdatum</th>
+                                    <th>Bezahlt</th>
+                                    <th>Rolle</th>
+                                    <th>Status</th>
+                                    <th>iFrame</th>
+                                    <th>Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each customers}}
+                                <tr>
+                                    <td>{{this.name}}</td>
+                                    <td>{{this.email}}</td>
+                                    <td>
+                                        {{#if this.createdAt}}
+                                            {{formatDate this.createdAt}}
+                                        {{else}}
+                                            -
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.subscriptionEndDate}}
+                                            {{#if this.iframeEnabled}}
+                                                {{formatDate this.subscriptionEndDate}}
+                                            {{else}}
+                                                <span style="text-decoration: line-through;">{{formatDate this.subscriptionEndDate}}</span>
+                                            {{/if}}
+                                        {{else}}
+                                            -
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.isPaid}}
+                                            <span class="badge bg-success">✓ Ja</span>
+                                        {{else}}
+                                            <span class="badge bg-danger">✗ Nein</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if (eq this.role 'admin')}}
+                                            <span class="badge bg-danger">Admin</span>
+                                        {{else}}
+                                            <span class="badge bg-primary">Kunde</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.subscriptionStatus}}
+                                            {{#if (eq this.subscriptionStatus 'active')}}
+                                                <span class="badge bg-success">Aktiv</span>
+                                            {{else if (eq this.subscriptionStatus 'blocked')}}
+                                                <span class="badge bg-danger">Gesperrt</span>
+                                            {{else}}
+                                                <span class="badge bg-secondary">{{this.subscriptionStatus}}</span>
+                                            {{/if}}
+                                        {{else}}
+                                            <span class="badge bg-secondary">Kein Abo</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        {{#if this.iframeEnabled}}
+                                            <span class="badge bg-success">✓ Aktiv</span>
+                                        {{else}}
+                                            <span class="badge bg-secondary">✗ Gesperrt</span>
+                                        {{/if}}
+                                    </td>
+                                    <td>
+                                        <a href="/admin/kundenanzeige/edit/{{this._id}}" class="btn btn-sm btn-warning me-1" style="white-space: nowrap;">
+                                            Bearbeiten
+                                        </a>
+                                        <button type="button" class="btn btn-sm {{#if this.iframeEnabled}}btn-danger{{else}}btn-success{{/if}} me-1" 
+                                                onclick="toggleIframe('{{this._id}}', {{this.iframeEnabled}})"
+                                                style="min-width: 100px; white-space: nowrap;"
+                                                {{#if (isSubscriptionExpired this.subscriptionEndDate)}}disabled{{/if}}>
+                                            {{#if this.iframeEnabled}}Sperren{{else}}Freischalten{{/if}}
+                                        </button>
+                                        {{#if (isSubscriptionExpired this.subscriptionEndDate)}}
+                                            <small class="text-danger d-block mt-1">Abo abgelaufen</small>
+                                        {{/if}}
+                                        <button type="button" class="btn btn-sm btn-danger" style="white-space: nowrap;"
+                                                onclick="confirmDelete('{{this._id}}', '{{this.name}}')">
+                                            Löschen
+                                        </button>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                {{else}}
+                    <p class="text-muted">Keine Kunden gefunden.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+    
+    {{> footer}}
+    
+    <script src="/js/kundenanzeige.js"></script>
+    <script>
+        initKundenanzeige('{{sortBy}}', '{{sortOrder}}');
+        
+        function toggleIframe(customerId, currentStatus) {
+            const newStatus = !currentStatus;
+            const statusText = newStatus ? 'freischalten' : 'sperren';
+            
+            if (confirm(`Möchtest du die iFrame-Konfiguration wirklich ${statusText}?`)) {
+                fetch(`/admin/kundenanzeige/toggle-iframe/${customerId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ iframeEnabled: newStatus })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Fehler: ' + (data.message || 'Unbekannter Fehler'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler:', error);
+                    alert('Ein Fehler ist aufgetreten');
+                });
+            }
+        }
+    </script>

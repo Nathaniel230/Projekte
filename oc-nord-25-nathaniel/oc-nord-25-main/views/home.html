@@ -1,0 +1,203 @@
+{{> navigation}}
+
+<!-- CSS Links -->
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/modern-theme.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="container mt-5">
+  <!-- Header Section -->
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <p class="text-muted mb-3">
+            {{t "home.description"}}
+          </p>
+          {{#if hasActiveSubscription}}
+          <button class="btn btn-success btn-lg" disabled>
+            <i class="fas fa-check me-2"></i>{{t "shop.alreadySubscribed"}}
+          </button>
+          {{else}}
+          <a href="/shop/subscription" class="btn btn-primary btn-lg">
+            <i class="fas fa-shopping-cart me-2"></i>{{t "home.orderNow"}}
+          </a>
+          {{/if}}
+          <div class="mt-2">
+            <small class="text-success">
+              <i class="fas fa-check me-1"></i>{{t "home.priceInfo"}}
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row">
+        <!-- Erster iframe -->
+        <div class="col-6">
+          <iframe src="/homeIframe" width="100%" height="200" frameborder="0" style="border-radius: 8px;"
+            title="Status Geschlossen">
+          </iframe>
+        </div>
+        <!-- Zweiter iframe -->
+        <div class="col-6">
+          <iframe src="/homeIframe2" width="100%" height="200" frameborder="0" style="border-radius: 8px;"
+            title="Status Geöffnet">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- How it works Section -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-10 text-center">
+      <h3 class="mb-3">{{t "home.howItWorks"}}</h3>
+      <p class="text-muted mb-5">{{t "home.howItWorksSubtitle"}}</p>
+      <div class="row">
+        <!-- Step 1 -->
+        <div class="col-md-4 mb-4">
+          <div class="text-center">
+            <div class="step-number">
+              <span class="h4">1</span>
+            </div>
+            <h5 class="mb-3">{{t "home.step1Title"}}</h5>
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">{{t "home.step1Text"}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="col-md-4 mb-4">
+          <div class="text-center">
+            <div class="step-number">
+              <span class="h4">2</span>
+            </div>
+            <h5 class="mb-3">{{t "home.step2Title"}}</h5>
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">{{t "home.step2Text"}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Step 3 -->
+        <div class="col-md-4 mb-4">
+          <div class="text-center">
+            <div class="step-number">
+              <span class="h4">3</span>
+            </div>
+            <h5 class="mb-3">{{t "home.step3Title"}}</h5>
+            <div class="card">
+              <div class="card-body">
+                <h6 class="card-title">{{t "home.step3Text"}}</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- FAQ Section -->
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="text-center mb-4">
+        <h3>{{t "home.faq"}}</h3>
+        <p class="text-muted">{{t "home.faqSubtitle"}}</p>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="accordion" id="faqAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  {{t "home.faqQ1"}}
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  {{t "home.faqA1"}}
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  {{t "home.faqQ2"}}
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+                data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  {{t "home.faqA2"}}
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  {{t "home.faqQ3"}}
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+                data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  {{t "home.faqA3"}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <div class="text-center mb-4">
+            <h2>{{t "home.contactTitle"}}</h2>
+            <p class="text-muted">{{t "home.contactSubtitle"}}</p>
+          </div>
+          <form>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="vorname" class="form-label">{{t "home.firstName"}}</label>
+                <input type="text" class="form-control" id="vorname" name="vorname" required>
+              </div>
+              <div class="col-md-6">
+                <label for="nachname" class="form-label">{{t "home.lastName"}}</label>
+                <input type="text" class="form-control" id="nachname" name="nachname" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">{{t "home.email"}}</label>
+              <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="betreff" class="form-label">{{t "home.subject"}}</label>
+              <input type="text" class="form-control" id="betreff" name="betreff" required>
+            </div>
+            <div class="mb-4">
+              <label for="nachricht" class="form-label">{{t "home.message"}}</label>
+              <textarea class="form-control" id="nachricht" name="nachricht" rows="6" required></textarea>
+            </div>
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary px-4 py-2">{{t "home.sendMessage"}}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- SPA-Mount-Container -->
+<div id="app" class="container mt-4"></div>
+{{> footer}}

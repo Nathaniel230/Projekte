@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Öffnungszeiten</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+            /* Allow iframe transparency */
+        }
+
+        #content-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content-container">
+        <!-- Content will be injected here -->
+    </div>
+
+    <script>
+        // Translations
+        const translations = {
+            de: { open: 'Geöffnet', closed: 'Geschlossen', currentOpen: 'Wir haben momentan offen', currentClosed: 'Wir haben momentan geschlossen', simpleOpen: 'Wir sind<br>geöffnet', simpleClosed: 'Wir sind<br>geschlossen', week: 'Öffnungszeiten', until: 'Bis', todayUntil: 'Heute bis', opens: 'Öffnet', closedVacation: 'In den Ferien', thankYou: 'Vielen Dank', mon: 'Montag', tue: 'Dienstag', wed: 'Mittwoch', thu: 'Donnerstag', fri: 'Freitag', sat: 'Samstag', sun: 'Sonntag' },
+            en: { open: 'Open', closed: 'Closed', currentOpen: 'We are currently open', currentClosed: 'We are currently closed', simpleOpen: 'We are<br>open', simpleClosed: 'We are<br>closed', week: 'Opening Hours', until: 'Until', todayUntil: 'Today until', opens: 'Opens', closedVacation: 'On vacation', thankYou: 'Thank you', mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday' },
+            fr: { open: 'Ouvert', closed: 'Fermé', currentOpen: 'Nous sommes actuellement ouverts', currentClosed: 'Nous sommes actuellement fermés', simpleOpen: 'Nous sommes<br>ouverts', simpleClosed: 'Nous sommes<br>fermés', week: 'Heures d\'ouverture', until: 'Jusqu\'à', todayUntil: 'Aujourd\'hui jusqu\'à', opens: 'Ouvre', closedVacation: 'En vacances', thankYou: 'Merci', mon: 'Lundi', tue: 'Mardi', wed: 'Mercredi', thu: 'Jeudi', fri: 'Vendredi', sat: 'Samedi', sun: 'Dimanche' },
+            it: { open: 'Aperto', closed: 'Chiuso', currentOpen: 'Siamo attualmente aperti', currentClosed: 'Siamo attualmente chiusi', simpleOpen: 'Siamo<br>aperti', simpleClosed: 'Siamo<br>chiusi', week: 'Orari di apertura', until: 'Fino alle', todayUntil: 'Oggi fino alle', opens: 'Apre', closedVacation: 'In vacanza', thankYou: 'Grazie', mon: 'Lunedì', tue: 'Martedì', wed: 'Mercoledì', thu: 'Giovedì', fri: 'Venerdì', sat: 'Sabato', sun: 'Domenica' },
+            es: { open: 'Abierto', closed: 'Cerrado', currentOpen: 'Estamos abiertos actualmente', currentClosed: 'Estamos cerrados actualmente', simpleOpen: 'Estamos<br>abiertos', simpleClosed: 'Estamos<br>cerrados', week: 'Horario de apertura', until: 'Hasta', todayUntil: 'Hoy hasta', opens: 'Abre', closedVacation: 'De vacaciones', thankYou: 'Gracias', mon: 'Lunes', tue: 'Martes', wed: 'Miércoles', thu: 'Jueves', fri: 'Viernes', sat: 'Sábado', sun: 'Domingo' }
+        };
+
+        function getParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                size: params.get('size') || 'medium',
+                lang: params.get('lang') || 'de',
+                status: params.get('status'), // 'open' or 'closed'
+                uid: params.get('uid'), // User ID
+                bgOpen: params.get('bgOpen') || '#99ff99',
+                bgClosed: params.get('bgClosed') || '#ff6666',
+                textOpen: params.get('textOpen') || '#333333',
+                textClosed: params.get('textClosed') || '#333333',
+                fontOpen: params.get('fontOpen') || 'Arial',
+                fontClosed: params.get('fontClosed') || 'Arial'
+            };
+        }
+
+        async function render() {
+            const params = getParams();
+            const t = translations[params.lang] || translations['de'];
+
+            let isOpen = false;
+            let weekData = null;
+            let nextOpen = null;
+            let nextOpenDetails = null;
+            let currentSlot = null;
+            let closesAt = null;
+            let todayTimes = null;
+            let reason = null; // Reason text
+
+            try {
+                // Add timestamp to prevent caching
+                let apiUrl = `/api/public/week/current?t=${Date.now()}`;
+                if (params.uid) {
+                    apiUrl += `&uid=${params.uid}`;
+                }
+                const response = await fetch(apiUrl);
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // If URL param 'status' matches the REAL status (data.status), fine.
+                    // But if they differ, AND 'status' is provided, we used to force it.
+                    // New logic: Only use 'params.status' if it was explicitly meant for static testing/previewing
+                    // where we DON'T want updates. 
+                    // However, user wants "Preview Closed" to switch to "Open" if real time changes.
+                    // This implies the 'status' param was just an INITIAL state for the preview.
+                    // BUT: In a real iFrame (widget), we usually don't pass 'status' at all.
+                    // The 'status' param is likely coming from the user copying a 'Preview Link'.
+
+                    // To fix this: We ALWAYS trust the server data (data.status) for the 'Live' state.
+                    // EXCEPT if we are in a purely static mode (maybe a flag 'static=true'?).
+                    // Assuming 'status' param was just for initial render or fallback.
+                    // We will IGNORE params.status if we have valid server data.
+
+                    isOpen = data.status === 'open';
+                    closesAt = data.closesAt;
+                    todayTimes = data.todayTimes;
+
+                    weekData = data.weekData;
+                    nextOpen = data.nextOpen;
+                    nextOpenDetails = data.nextOpenDetails;
+                    currentSlot = data.currentSlot;
+                    reason = data.reason;
+                } else {
+                    console.error('Failed to fetch week data');
+                    // Fallback to params only if fetch fails
+                    isOpen = params.status === 'open';
+                }
+            } catch (e) {
+                console.error('Error fetching week data', e);
+                isOpen = params.status === 'open';
+            }
+
+            const currentBg = isOpen ? params.bgOpen : params.bgClosed;
+            const currentText = isOpen ? params.textOpen : params.textClosed;
+            let currentFont = isOpen ? params.fontOpen : params.fontClosed;
+
+            // Font-Family Fallbacks
+            if (currentFont === 'Roboto') currentFont = "'Roboto', sans-serif";
+            else if (currentFont === 'Inter') currentFont = "'Inter', sans-serif";
+            else currentFont = "Arial, sans-serif";
+
+            const container = document.getElementById('content-container');
+            const iframeSim = document.createElement('div');
+
+            iframeSim.style.backgroundColor = currentBg;
+            iframeSim.style.color = currentText;
+            iframeSim.style.fontFamily = currentFont;
+            iframeSim.style.transition = 'all 0.3s ease';
+            // iframeSim.style.overflow = 'hidden'; // Entfernt
+            iframeSim.style.position = 'relative';
+            iframeSim.style.boxSizing = 'border-box';
+
+            let content = '';
+
+            if (params.size === 'large') {
+                // Gross: Wochenplan
+                iframeSim.style.width = '100%';
+                iframeSim.style.padding = '1rem';
+                // Keine Box-Shadow oder Border-Radius für "Gross", damit es flach aussieht
+
+                const statusText = isOpen ? t.currentOpen : t.currentClosed;
+
+                // Helper to format times
+                const formatTimes = (dayKey) => {
+                    if (!weekData || !weekData[dayKey]) return '...';
+                    const day = weekData[dayKey];
+                    if (day.closed) return t.closed;
+                    return day.timeSlots.map(s => `${s.open}-${s.close}`).join('<br>');
+                };
+
+                // Helper to get date
+                const getDate = (dayKey) => {
+                    if (!weekData || !weekData[dayKey]) return '';
+                    const dateParts = weekData[dayKey].date.split('-');
+                    return `${dateParts[2]}.${dateParts[1]}`;
+                };
+
+                content = `
+                    <div style="text-align: center; font-family: inherit;">
+                        <h4 style="margin-bottom: 0.5rem; font-weight: 600; color: inherit; font-family: inherit;">${t.week}</h4>
+                        <p style="margin-bottom: 1.5rem; font-size: 1.1rem; opacity: 0.9;">${statusText}</p>
+                        
+                        <!-- First Table (Mon-Thu) -->
+                        <div style="margin-bottom: 2rem;">
+                            <table style="width: 100%; border-collapse: collapse; color: inherit; font-family: inherit; background: transparent;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid currentColor;">
+                                        <th style="padding: 0.5rem; font-weight: 600; opacity: 0.9;">${t.mon} <br><small style="font-weight:normal; font-size:0.8em">${getDate('montag')}</small></th>
+                                        <th style="padding: 0.5rem; font-weight: 600; opacity: 0.9;">${t.tue} <br><small style="font-weight:normal; font-size:0.8em">${getDate('dienstag')}</small></th>
+                                        <th style="padding: 0.5rem; font-weight: 600; opacity: 0.9;">${t.wed} <br><small style="font-weight:normal; font-size:0.8em">${getDate('mittwoch')}</small></th>
+                                        <th style="padding: 0.5rem; font-weight: 600; opacity: 0.9;">${t.thu} <br><small style="font-weight:normal; font-size:0.8em">${getDate('donnerstag')}</small></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 0.5rem; vertical-align: top;">${formatTimes('montag')}</td>
+                                        <td style="padding: 0.5rem; vertical-align: top;">${formatTimes('dienstag')}</td>
+                                        <td style="padding: 0.5rem; vertical-align: top;">${formatTimes('mittwoch')}</td>
+                                        <td style="padding: 0.5rem; vertical-align: top;">${formatTimes('donnerstag')}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Second Table (Fri-Sun) -->
+                        <div>
+                            <table style="width: 100%; border-collapse: collapse; color: inherit; font-family: inherit; background: transparent;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid currentColor;">
+                                        <th style="padding: 0.5rem; font-weight: 600; opacity: 0.9;">${t.fri} <br><small style="font-weight:normal; font-size:0.8em">${getDate('freitag')}</small></th>
+                                        <th style="padding: 0.5rem; font-weight: 600; opacity: 0.9;">${t.sat} <br><small style="font-weight:normal; font-size:0.8em">${getDate('samstag')}</small></th>
+                                        <th style="padding: 0.5rem; font-weight: 600; opacity: 0.9;">${t.sun} <br><small style="font-weight:normal; font-size:0.8em">${getDate('sonntag')}</small></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 0.5rem; vertical-align: top;">${formatTimes('freitag')}</td>
+                                        <td style="padding: 0.5rem; vertical-align: top;">${formatTimes('samstag')}</td>
+                                        <td style="padding: 0.5rem; vertical-align: top;">${formatTimes('sonntag')}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else if (params.size === 'medium') {
+                // Mittel: Box mit Status und Zeit
+                iframeSim.style.width = '100%';
+                iframeSim.style.maxWidth = '300px';
+                // iframeSim.style.minHeight = '200px'; 
+                iframeSim.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                iframeSim.style.borderRadius = '15px';
+                iframeSim.style.display = 'flex';
+                iframeSim.style.flexDirection = 'column';
+                iframeSim.style.justifyContent = 'center';
+                iframeSim.style.alignItems = 'center';
+                iframeSim.style.textAlign = 'center';
+                iframeSim.style.padding = '40px';
+
+                if (isOpen) {
+                    // Open: Show exact time window (08:00 - 12:00)
+                    // If currentSlot is available from updated backend, use it. Else fallback.
+                    const timeDisplay = currentSlot ? `${currentSlot.open} - ${currentSlot.close}` : (closesAt ? `${t.until} ${closesAt}` : '');
+                    // Only show reason if present. If no reason (Standard), show nothing extra.
+                    const reasonHtml = reason ? `<p style="margin: 0; font-size: 1.1rem; color: inherit; font-family: inherit; font-weight: normal; opacity: 0.9;">${reason}</p>` : '';
+                    content = `
+                        <h3 style="margin: 0 0 ${reason ? '0.5rem' : '1rem'} 0; font-size: 1.8rem; color: inherit; font-family: inherit;">${t.open}</h3>
+                        ${reasonHtml}
+                        <p style="margin: 0.5rem 0 0 0; font-size: 1.5rem; font-weight:bold; color: inherit; font-family: inherit;">${timeDisplay}</p>
+                    `;
+                } else {
+                    // Closed: Show "Öffnet [Wochentag] [Datum]" if NO reason is provided (regular closure)
+                    // If a specific reason is provided (Out of Plan / Holiday), do NOT show "Opens at..." to avoid confusion
+                    let contentClosed = '';
+
+                    if (!reason && nextOpenDetails) {
+                        contentClosed = `
+                            <p style="margin: 0; font-size: 1rem; color: inherit; font-family: inherit;">${t.opens} ${nextOpenDetails.day} ${nextOpenDetails.date}</p>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 1.5rem; font-weight:bold; color: inherit; font-family: inherit;">${nextOpenDetails.time}</p>
+                         `;
+                    } else if (!reason) {
+                        // Fallback ONLY if we have next open details. 
+                        // If not, we don't repeat "Closed" text, as the header already says "Closed".
+                        contentClosed = '';
+                    }
+
+                    const reasonHtml = reason ? `<p style="margin: 0 0 1rem 0; font-size: 1.1rem; color: inherit; font-family: inherit; font-weight: normal; opacity: 0.9;">${reason}</p>` : '';
+
+                    content = `
+                        <h3 style="margin: 0 0 ${reason ? '0.5rem' : '1rem'} 0; font-size: 1.8rem; color: inherit; font-family: inherit;">${t.closed}</h3>
+                        ${reasonHtml}
+                        ${contentClosed}
+                    `;
+                }
+            } else if (params.size === 'small') {
+                // Klein: Kompakt
+                iframeSim.style.width = '100%';
+                iframeSim.style.maxWidth = '200px';
+                iframeSim.style.minHeight = '150px';
+                iframeSim.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                iframeSim.style.borderRadius = '12px';
+                iframeSim.style.display = 'flex';
+                iframeSim.style.flexDirection = 'column';
+                iframeSim.style.justifyContent = 'center';
+                iframeSim.style.alignItems = 'center';
+                iframeSim.style.textAlign = 'center';
+                iframeSim.style.padding = '1rem';
+                iframeSim.style.border = '1px solid rgba(0,0,0,0.1)';
+
+                if (isOpen) {
+                    // Open: Show "Bis 18:00"
+                    const until = closesAt ? `${t.until} ${closesAt}` : '';
+                    content = `
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 1.4rem; color: inherit; font-family: inherit;">${t.open}</h4>
+                        <p style="margin: 0; font-size: 0.9rem; color: inherit; font-family: inherit;">${until}</p>
+                    `;
+                } else {
+                    // Closed: Fix logic (No "um", show Day, Time on new line)
+                    let subText = '';
+                    if (reason) {
+                        // If closed with reason, show reason instead of next open time
+                        subText = reason;
+                    } else if (nextOpenDetails) {
+                        subText = `${t.opens} ${nextOpenDetails.day} ${nextOpenDetails.date}<br><span style="font-size: 1.2em; font-weight: 600;">${nextOpenDetails.time}</span>`;
+                    }
+
+                    content = `
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 1.4rem; color: inherit; font-family: inherit;">${t.closed}</h4>
+                        <p style="margin: 0; font-size: 0.85rem; line-height: 1.5; color: inherit; font-family: inherit;">${subText}</p>
+                    `;
+                }
+            }
+
+            iframeSim.innerHTML = content;
+            container.innerHTML = '';
+            container.appendChild(iframeSim);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+            // Update every minute (60000 ms)
+            setInterval(render, 60000);
+        });
+    </script>
+</body>
+
+</html>

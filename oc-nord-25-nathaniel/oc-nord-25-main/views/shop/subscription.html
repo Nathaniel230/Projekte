@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{t "shop.title"}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+        }
+
+        .subscription-card {
+            border: 3px solid #007bff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .subscription-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .price-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .feature-list {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .cta-button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+        }
+
+        .security-badge {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">
+                <i class="fas fa-star me-3"></i>{{t "shop.hero"}}
+            </h1>
+            <p class="lead">{{t "shop.heroSubtitle"}}</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Subscription Card -->
+                <div class="card subscription-card">
+                    <div class="card-header bg-primary text-white text-center py-4">
+                        <h2 class="mb-0">{{t "shop.cardTitle"}}</h2>
+                    </div>
+                    <div class="card-body text-center p-5">
+                        <!-- Pricing -->
+                        <div class="mb-5">
+                            <div class="price-display">67.67 CHF</div>
+                            <span class="text-muted fs-5">{{t "shop.pricePerYear"}}</span>
+                            <div class="mt-2">
+                                <small class="text-success">{{t "shop.pricePerMonth"}}</small>
+                            </div>
+                        </div>
+
+                        <!-- Features -->
+                        <div class="feature-list mb-5">
+                            <h4 class="mb-4">{{t "shop.featuresTitle"}}</h4>
+
+                            <div class="feature-item">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <strong>{{t "shop.feature1"}}</strong>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-headset text-success me-3"></i>
+                                <strong>{{t "shop.feature2"}}</strong>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-rocket text-success me-3"></i>
+                                <strong>{{t "shop.feature3"}}</strong>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-star text-success me-3"></i>
+                                <strong>{{t "shop.feature4"}}</strong>
+                            </div>
+
+                            <div class="feature-item">
+                                <i class="fas fa-times-circle text-success me-3"></i>
+                                <strong>{{t "shop.feature5"}}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            {{#if hasActiveSubscription}}
+                            <button class="btn btn-success cta-button" disabled>
+                                <i class="fas fa-check me-2"></i>
+                                {{t "shop.alreadySubscribed"}}
+                            </button>
+                            {{else}}
+                            <button class="btn btn-primary cta-button" onclick="startSubscription()">
+                                <i class="fas fa-credit-card me-2"></i>
+                                {{t "shop.subscribeButton"}}
+                            </button>
+                            {{/if}}
+                        </div>
+
+                        <!-- Security Info -->
+                        <div class="security-badge">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <i class="fab fa-stripe fa-2x text-primary mb-2"></i>
+                                    <div><strong>{{t "shop.secureStripe"}}</strong></div>
+                                    <small class="text-muted">{{t "shop.secureStripeSubtext"}}</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                                    <div><strong>{{t "shop.secure100"}}</strong></div>
+                                    <small class="text-muted">{{t "shop.secure100Subtext"}}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="text-center mt-5">
+                    <h3 class="mb-4">{{t "shop.faqTitle"}}</h3>
+
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse1">
+                                    {{t "shop.faq1Question"}}
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    {{t "shop.faq1Answer"}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse2">
+                                    {{t "shop.faq2Question"}}
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    {{t "shop.faq2Answer"}}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse3">
+                                    {{t "shop.faq3Question"}}
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    {{t "shop.faq3Answer"}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast für Benachrichtigungen -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastNotification" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto">Abonnement</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMessage"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const stripe = Stripe('{{{stripePublishableKey}}}');
+
+        function startSubscription() {
+            // Zeige Loading-Zustand
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>{{t "shop.loading"}}';
+            button.disabled = true;
+
+            // Erstelle Checkout Session für Abonnement
+            fetch('/shop/create-subscription-checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sessionId) {
+                        // Zu Stripe Checkout weiterleiten
+                        return stripe.redirectToCheckout({ sessionId: data.sessionId });
+                    } else {
+                        throw new Error(data.error || '{{t "shop.errorCreating"}}');
+                    }
+                })
+                .then(result => {
+                    if (result && result.error) {
+                        showToast(result.error.message, 'error');
+                        // Button zurücksetzen
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast('{{t "shop.errorCreating"}}: ' + error.message, 'error');
+                    // Button zurücksetzen
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
+        }
+
+        function showToast(message, type = 'info') {
+            const toastEl = document.getElementById('toastNotification');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+
+            // Toast-Farbe je nach Typ ändern
+            toastEl.className = 'toast';
+            if (type === 'success') {
+                toastEl.classList.add('bg-success', 'text-white');
+            } else if (type === 'error') {
+                toastEl.classList.add('bg-danger', 'text-white');
+            }
+
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        // Smooth scroll für bessere UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

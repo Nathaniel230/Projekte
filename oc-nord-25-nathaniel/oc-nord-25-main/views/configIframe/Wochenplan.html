@@ -1,0 +1,331 @@
+{{> navigation}}
+
+<link rel="stylesheet" href="/css/custom.css">
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/modern-theme.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="/css/wochenplan.css">
+
+<div class="container-fluid wochenplan-container">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2>Wochenplan-Editor</h2>
+        </div>
+    </div>
+
+    <!-- top right: manual button -->
+    <div class="position-absolute" style="right:2rem;top:6rem;z-index:100;">
+        <button class="btn btn-primary" style="box-shadow:0 2px 8px rgba(23,140,164,0.3);">
+            <i class="bi bi-question-circle"></i> Anleitung
+        </button>
+    </div>
+
+    <div class="row g-2">
+        <!-- Week navigation and table section (cards removed) -->
+        <div class="col-12">
+            <!-- Week navigation controls (outer boxes removed) -->
+            <div class="row mb-3">
+                <div class="col-12 d-flex justify-content-center">
+                    <div class="week-header-box">
+                        <div class="d-flex align-items-center me-2" id="decouple-container"
+                            style="display: none !important;">
+                            <div class="d-flex align-items-center bg-white px-3 py-2 rounded border"
+                                style="box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <span class="section-title me-2" style="font-size: 0.9rem;">Entkoppeln</span>
+                                <input type="checkbox" class="form-check-input" id="decouple-week-checkbox"
+                                    onchange="toggleDecoupleWeek()" style="margin-top: 0;">
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-secondary" id="prev-week-btn" onclick="changeWeek(-1)">◀</button>
+                        <span class="week-display" id="current-week">KW 47</span>
+                        <button class="btn btn-outline-secondary" id="next-week-btn" onclick="changeWeek(1)">▶</button>
+                        <div class="d-flex align-items-center ms-4">
+                            <div class="d-flex align-items-center bg-white px-3 py-2 rounded border"
+                                style="box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <span class="section-title me-2" style="font-size: 0.9rem;">Standardwoche</span>
+                                <input type="checkbox" class="form-check-input" id="standard-week-checkbox"
+                                    onchange="toggleStandardWeekMode()" style="margin-top: 0;">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-sm ms-2" onclick="saveStandardWeek()" id="save-standard-btn"
+                            style="display: none;">Übernehmen</button>
+                        <div id="standard-week-warning" class="alert alert-warning mt-0 mb-0 py-1 px-2 ms-2"
+                            role="alert" style="display:none; white-space: nowrap;">
+                            <!-- filled dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly schedule table -->
+            <div class="row mb-2">
+                <div class="col-12">
+                    <div class="weekly-schedule">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Montag</th>
+                                    <th>Dienstag</th>
+                                    <th>Mittwoch</th>
+                                    <th>Donnerstag</th>
+                                    <th>Freitag</th>
+                                    <th>Samstag</th>
+                                    <th>Sonntag</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Opening times rows will be dynamically generated -->
+                                <tr class="opening-times" id="montag-row-0">
+                                    <td id="montag-cell">
+                                        <div class="day-controls mb-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox"
+                                                    class="form-check-input closed-day-checkbox me-2 mt-0"
+                                                    id="montag-closed" onchange="toggleDayClosed('montag')"
+                                                    style="height: 1.5em; width: 1.5em;">
+                                                <label class="form-check-label" for="montag-closed"
+                                                    style="padding-top: 2px;">Geschlossen</label>
+                                            </div>
+                                        </div>
+                                        <div class="time-slots-container">
+                                            <div class="time-slot" data-slot-id="0">
+                                                <input type="time" class="form-control mb-2" placeholder="Öffnet">
+                                                <input type="time" class="form-control" placeholder="Schliesst">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="dienstag-cell">
+                                        <div class="day-controls mb-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox"
+                                                    class="form-check-input closed-day-checkbox me-2 mt-0"
+                                                    id="dienstag-closed" onchange="toggleDayClosed('dienstag')"
+                                                    style="height: 1.5em; width: 1.5em;">
+                                                <label class="form-check-label"
+                                                    for="dienstag-closed">Geschlossen</label>
+                                            </div>
+                                        </div>
+                                        <div class="time-slots-container">
+                                            <div class="time-slot" data-slot-id="0">
+                                                <input type="time" class="form-control mb-2" placeholder="Öffnet">
+                                                <input type="time" class="form-control" placeholder="Schliesst">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="mittwoch-cell">
+                                        <div class="day-controls mb-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox"
+                                                    class="form-check-input closed-day-checkbox me-2 mt-0"
+                                                    id="mittwoch-closed" onchange="toggleDayClosed('mittwoch')"
+                                                    style="height: 1.5em; width: 1.5em;">
+                                                <label class="form-check-label"
+                                                    for="mittwoch-closed">Geschlossen</label>
+                                            </div>
+                                        </div>
+                                        <div class="time-slots-container">
+                                            <div class="time-slot" data-slot-id="0">
+                                                <input type="time" class="form-control mb-2" placeholder="Öffnet">
+                                                <input type="time" class="form-control" placeholder="Schliesst">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="donnerstag-cell">
+                                        <div class="day-controls mb-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox"
+                                                    class="form-check-input closed-day-checkbox me-2 mt-0"
+                                                    id="donnerstag-closed" onchange="toggleDayClosed('donnerstag')"
+                                                    style="height: 1.5em; width: 1.5em;">
+                                                <label class="form-check-label"
+                                                    for="donnerstag-closed">Geschlossen</label>
+                                            </div>
+                                        </div>
+                                        <div class="time-slots-container">
+                                            <div class="time-slot" data-slot-id="0">
+                                                <input type="time" class="form-control mb-2" placeholder="Öffnet">
+                                                <input type="time" class="form-control" placeholder="Schliesst">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="freitag-cell">
+                                        <div class="day-controls mb-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox"
+                                                    class="form-check-input closed-day-checkbox me-2 mt-0"
+                                                    id="freitag-closed" onchange="toggleDayClosed('freitag')"
+                                                    style="height: 1.5em; width: 1.5em;">
+                                                <label class="form-check-label" for="freitag-closed">Geschlossen</label>
+                                            </div>
+                                        </div>
+                                        <div class="time-slots-container">
+                                            <div class="time-slot" data-slot-id="0">
+                                                <input type="time" class="form-control mb-2" placeholder="Öffnet">
+                                                <input type="time" class="form-control" placeholder="Schliesst">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="samstag-cell">
+                                        <div class="day-controls mb-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox"
+                                                    class="form-check-input closed-day-checkbox me-2 mt-0"
+                                                    id="samstag-closed" onchange="toggleDayClosed('samstag')"
+                                                    style="height: 1.5em; width: 1.5em;">
+                                                <label class="form-check-label" for="samstag-closed">Geschlossen</label>
+                                            </div>
+                                        </div>
+                                        <div class="time-slots-container">
+                                            <div class="time-slot" data-slot-id="0">
+                                                <input type="time" class="form-control mb-2" placeholder="Öffnet">
+                                                <input type="time" class="form-control" placeholder="Schliesst">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td id="sonntag-cell">
+                                        <div class="day-controls mb-3">
+                                            <div class="form-check d-flex align-items-center">
+                                                <input type="checkbox"
+                                                    class="form-check-input closed-day-checkbox me-2 mt-0"
+                                                    id="sonntag-closed" onchange="toggleDayClosed('sonntag')"
+                                                    style="height: 1.5em; width: 1.5em;">
+                                                <label class="form-check-label" for="sonntag-closed">Geschlossen</label>
+                                            </div>
+                                        </div>
+                                        <div class="time-slots-container">
+                                            <div class="time-slot" data-slot-id="0">
+                                                <input type="time" class="form-control mb-2" placeholder="Öffnet">
+                                                <input type="time" class="form-control" placeholder="Schliesst">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Add opening buttons row -->
+                                <tr class="add-opening-row">
+                                    <td><button class="btn btn-outline-primary w-100" onclick="addOpening('montag')">+
+                                            Öffnung</button></td>
+                                    <td><button class="btn btn-outline-primary w-100" onclick="addOpening('dienstag')">+
+                                            Öffnung</button></td>
+                                    <td><button class="btn btn-outline-primary w-100" onclick="addOpening('mittwoch')">+
+                                            Öffnung</button></td>
+                                    <td><button class="btn btn-outline-primary w-100"
+                                            onclick="addOpening('donnerstag')">+
+                                            Öffnung</button></td>
+                                    <td><button class="btn btn-outline-primary w-100" onclick="addOpening('freitag')">+
+                                            Öffnung</button></td>
+                                    <td><button class="btn btn-outline-primary w-100" onclick="addOpening('samstag')">+
+                                            Öffnung</button></td>
+                                    <td><button class="btn btn-outline-primary w-100" onclick="addOpening('sonntag')">+
+                                            Öffnung</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special days section -->
+        <div class="col-md-4">
+            <div class="card p-4">
+                <button class="btn btn-primary w-100" id="newSpecialDayBtn" onclick="toggleSpecialDayForm()">Neuer
+                    Speziallag</button>
+
+                <div class="special-day-form mt-3" id="specialDayForm" style="display: none;">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Von:</label>
+                            <input type="date" class="form-control" id="specialFromDate">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Bis:</label>
+                            <input type="date" class="form-control" id="specialToDate">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status:</label>
+                        <select class="form-control" id="specialStatus">
+                            <option value="offen">Offen</option>
+                            <option value="geschlossen">Geschlossen</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Sprache</label>
+                        <select class="form-control" id="specialLanguageSelector" onchange="switchSpecialLanguage()">
+                            <option value="de">Deutsch</option>
+                            <option value="en">Englisch</option>
+                            <option value="fr">Französisch</option>
+                            <option value="it">Italienisch</option>
+                            <option value="es">Spanisch</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Grund (<span id="currentSpecialLangLabel">Deutsch</span>):</label>
+                        <input type="text" class="form-control" id="specialReason"
+                            placeholder="z.B. Feiertag, Wartung..." maxlength="50">
+                    </div>
+                    <div class="d-flex gap-2 mt-2">
+                        <button class="btn btn-outline-secondary flex-fill"
+                            onclick="cancelSpecialDay()">Abbrechen</button>
+                        <button class="btn btn-primary flex-fill" id="saveSpecialDayBtn"
+                            onclick="saveSpecialDay()">Speichern</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special days list -->
+        <div class="col-md-5">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Spezialtage</h5>
+                    <button class="btn btn-outline-secondary" onclick="deleteSelectedSpecialDays()">Löschen</button>
+                </div>
+
+                <div class="special-days-list" id="specialDaysList">
+                    <p class="text-muted">Keine Spezialtage erfasst</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save controls -->
+        <div class="col-md-3">
+            <div class="card p-4">
+                <div class="d-flex flex-column gap-2">
+                    <button class="btn btn-success w-100" onclick="saveAll()">Speichern</button>
+                    <button class="btn btn-outline-secondary w-100" onclick="goBack()">Zurück</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Week Picker Modal -->
+<div class="modal fade" id="weekPickerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Woche auswählen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <button class="btn btn-outline-secondary" onclick="changePickerYear(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h3 id="pickerYearDisplay" class="m-0 font-weight-bold"></h3>
+                    <button class="btn btn-outline-secondary" onclick="changePickerYear(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="row g-2" id="weekGrid">
+                    <!-- Weeks will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/configIframe/wochenplan.js?v=2"></script>
+
+{{> footer}}

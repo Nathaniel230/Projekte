@@ -1,0 +1,86 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark custom-navbar">
+  <div class="container-fluid custom-container">
+    <!-- Links: Logo und Home -->
+    <ul class="navbar-nav me-auto">
+      <li class="nav-item d-flex align-items-center">
+        <a href="/" class="logo-link d-flex align-items-center">
+          <div class="logo-container">
+            <img src="/img/openclose.png" alt="OpenClose Logo">
+          </div>
+          <span class="brand-text">OpenClose</span>
+        </a>
+      </li>
+    </ul>
+    <!-- Rechts: Sprache und Anmelden Button -->
+    <ul class="navbar-nav">
+      <li class="nav-item dropdown me-2">
+        <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown"
+          aria-expanded="false">
+          <i class="fas fa-globe me-1"></i>
+          {{#if (eq language "de")}}Deutsch{{/if}}
+          {{#if (eq language "en")}}English{{/if}}
+          {{#if (eq language "fr")}}Français{{/if}}
+          {{#if (eq language "it")}}Italiano{{/if}}
+          {{#if (eq language "es")}}Español{{/if}}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+          <li><a class="dropdown-item {{#if (eq language " de")}}active{{/if}}" href="?lng=de">🇩🇪 Deutsch</a></li>
+          <li><a class="dropdown-item {{#if (eq language " en")}}active{{/if}}" href="?lng=en">🇬🇧 English</a></li>
+          <li><a class="dropdown-item {{#if (eq language " fr")}}active{{/if}}" href="?lng=fr">🇫🇷 Français</a></li>
+          <li><a class="dropdown-item {{#if (eq language " it")}}active{{/if}}" href="?lng=it">🇮🇹 Italiano</a></li>
+          <li><a class="dropdown-item {{#if (eq language " es")}}active{{/if}}" href="?lng=es">🇪🇸 Español</a></li>
+        </ul>
+      </li>
+      {{#if isLoggedIn}}
+      <li class="nav-item dropdown">
+        <a class="nav-link d-flex align-items-center profile-dropdown-toggle" href="#" id="profileDropdown"
+          role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="profile-avatar {{#if isAdmin}}admin-avatar{{else}}user-avatar{{/if}}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-person-fill"
+              viewBox="0 0 16 16">
+              <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+            </svg>
+          </div>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+          {{#if isAdmin}}
+          <!-- Admin Menü -->
+          <li>
+            <h6 class="dropdown-header"><i class="fas fa-crown text-warning"></i> Admin-Bereich</h6>
+          </li>
+          <li><a class="dropdown-item" href="/user/datenverwaltung"><i
+                class="fas fa-user-cog me-2"></i>Datenverwaltung</a></li>
+          <li><a class="dropdown-item" href="/admin/kundenanzeige"><i class="fas fa-users me-2"></i>Kundenanzeige</a>
+          </li>
+          <li><a class="dropdown-item" href="/admin/rechnungen"><i class="fas fa-file-invoice me-2"></i>Rechnungen</a>
+          </li>
+          <li><a class="dropdown-item" href="/admin/statistiken"><i class="fas fa-chart-bar me-2"></i>Statistiken</a>
+          </li>
+          {{else}}
+          <!-- Normaler User Menü -->
+          <li><a class="dropdown-item" href="/user/datenverwaltung"><i
+                class="fas fa-user-cog me-2"></i>Datenverwaltung</a></li>
+          <li><a class="dropdown-item" href="/configIframe/config_Iframe"><i class="fas fa-code me-2"></i>iFrame
+              Konfiguration</a></li>
+          <li><a class="dropdown-item" href="/user/bestellhistorie"><i
+                class="fas fa-history me-2"></i>Bestellhistorie</a></li>
+          {{/if}}
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><a class="dropdown-item text-danger" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Abmelden</a>
+          </li>
+        </ul>
+      </li>
+      {{else}}
+      <li class="nav-item">
+        <a class="btn btn-outline-light" href="/login?lng={{language}}">{{t 'nav.login'}}</a>
+      </li>
+      {{/if}}
+    </ul>
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

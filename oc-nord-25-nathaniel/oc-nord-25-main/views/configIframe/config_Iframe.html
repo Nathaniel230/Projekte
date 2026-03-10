@@ -1,0 +1,237 @@
+{{> navigation}}
+
+<!-- simple stylesheet reuse -->
+<link rel="stylesheet" href="/css/custom.css">
+<link rel="stylesheet" href="/css/home.css">
+<link rel="stylesheet" href="/css/modern-theme.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="/css/config-iframe.css">
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+<div class="container-fluid config-container">
+    <input type="hidden" id="currentUserId" value="{{user._id}}">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h2>iFrame-Konfiguration</h2>
+        </div>
+    </div>
+
+    <!-- top right: manual button -->
+    <div class="position-absolute" style="right:2rem;top:6rem;z-index:100;">
+        <button class="btn btn-primary" style="padding: 0.5rem 1.5rem;box-shadow:0 2px 8px rgba(23,140,164,0.3);">
+            <i class="bi bi-question-circle"></i> Anleitung
+        </button>
+    </div>
+
+    <div class="row g-4">
+        <!-- left column: settings -->
+        <div class="col-lg-4">
+            <div class="settings-card">
+                <div class="settings-section no-inner-box">
+                    <div class="section-title">Zeitzone</div>
+                    <select class="form-control" id="timezoneSelector">
+                        <option>Europe/Zurich</option>
+                        <option>Europe/Berlin</option>
+                        <option>Europe/Paris</option>
+                        <option>UTC</option>
+                        <option>America/New_York</option>
+                        <option>America/Chicago</option>
+                        <option>America/Los_Angeles</option>
+                        <option>Asia/Tokyo</option>
+                        <option>Australia/Sydney</option>
+                    </select>
+                </div>
+
+                <div class="settings-section no-inner-box" style="display: none;">
+                    <div class="section-title">Sprache</div>
+                    <select class="form-control" id="previewLanguageSelector">
+                        <option value="de">Deutsch</option>
+                        <option value="en">English</option>
+                        <option value="fr">Français</option>
+                        <option value="it">Italiano</option>
+                        <option value="es">Español</option>
+                    </select>
+                </div>
+
+                <!-- Einstellungen mit zwei Spalten für Offen/Geschlossen -->
+                <div class="settings-section no-inner-box">
+                    <div class="section-title">Darstellungseinstellungen</div>
+                    <table class="table table-borderless table-sm" style="table-layout: auto; width: 100%;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th width="25%">Offen</th>
+                                <th width="25%">Geschlossen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center" style="height:30px;">
+                                        Hintergrundfarbe:
+                                    </div>
+                                </td>
+                                <td class="color-cell"><input type="color" class="color-input" id="bgColorOpen"
+                                        value="#ffffff"></td>
+                                <td class="color-cell"><input type="color" class="color-input" id="bgColorClosed"
+                                        value="#e0e0e0"></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center" style="height:30px;">
+                                        Textfarbe:
+                                    </div>
+                                </td>
+                                <td class="color-cell"><input type="color" class="color-input" id="textColorOpen"
+                                        value="#000000"></td>
+                                <td class="color-cell"><input type="color" class="color-input" id="textColorClosed"
+                                        value="#333333"></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center" style="height:38px;">
+                                        Schriftart:
+                                    </div>
+                                </td>
+                                <td style="padding: 0.5rem;">
+                                    <select class="form-control form-control-sm" id="fontFamilyOpen"
+                                        style="width: 100%;">
+                                        <option>Arial</option>
+                                        <option>Roboto</option>
+                                        <option>Inter</option>
+                                    </select>
+                                </td>
+                                <td style="padding: 0.5rem;">
+                                    <select class="form-control form-control-sm" id="fontFamilyClosed"
+                                        style="width: 100%;">
+                                        <option>Arial</option>
+                                        <option>Roboto</option>
+                                        <option>Inter</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Vorauswahlen -->
+                <div class="checkbox-wrapper">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span class="fw-semibold" style="color: var(--secondary-color);">Vorauswahlen aktivieren</span>
+                        <input type="checkbox" id="vorauswahlen" aria-label="Vorauswahlen" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Out of Plan List -->
+            <div class="card p-4 mt-3" style="width: 100%;">
+                <div class="section-title text-center mb-3">Geplante Abweichungen</div>
+                <div id="outofplanList" class="list-group list-group-flush"
+                    style="max-height: 300px; overflow-y: auto;">
+                    <div class="text-center text-muted p-3">Lade Einträge...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- center: preview -->
+        <div class="col-lg-5 text-center">
+            <div class="card p-4">
+                <div class="preview-controls">
+                    <div>
+                        <label>Vorschau-Status</label>
+                        <button id="previewToggleBtn" class="btn btn-success" onclick="togglePreviewStatus()">
+                            Offen
+                        </button>
+                    </div>
+                    <div>
+                        <label>Grösse</label>
+                        <select class="form-control form-control-sm" id="previewSizeSelector">
+                            <option value="large">Gross</option>
+                            <option value="medium" selected>Mittel</option>
+                            <option value="small">Klein</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="previewBox"
+                    style="margin-bottom: 2rem; display: flex; justify-content: center; align-items: center; min-height: 200px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                    Vorschaubereich</div>
+
+                <div class="mb-3">
+                    <label class="fw-semibold">Iframe URL</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="iframeUrlInput" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyIframeUrl()">
+                            <i class="bi bi-clipboard"></i> Kopieren
+                        </button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="saveSettings()">
+                        <i class="bi bi-save"></i> Speichern
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="window.location.href='/wochenplan'">
+                        <i class="bi bi-calendar-week"></i> Wochenplan
+                    </button>
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Zurück
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- right column: out-of-plan -->
+        <div class="col-lg-3">
+            <div class="card p-4" style="width: 100%;">
+                <div class="section-title text-center mb-3">Ausserplanmässig schliessen / öffnen</div>
+                <div class="mb-4 text-center">
+                    <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+                        <span class="today-label">Heute:</span>
+                        <button id="toggleBtn" onclick="toggleButtonText(this)">Schliessen</button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-semibold">Von</label>
+                    <input type="date" class="form-control mb-2" id="outofplanDateFrom">
+                </div>
+                <div class="mb-3">
+                    <label class="fw-semibold">Bis</label>
+                    <input type="date" class="form-control mb-2" id="outofplanDateTo">
+                </div>
+                <div class="mb-3">
+                    <label class="fw-semibold">Sprache</label>
+                    <select class="form-control" id="languageSelector" onchange="switchLanguage()">
+                        <option value="de">Deutsch</option>
+                        <option value="en">Englisch</option>
+                        <option value="fr">Französisch</option>
+                        <option value="it">Italienisch</option>
+                        <option value="es">Spanisch</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-semibold">Beschreibung (<span id="currentLangLabel">Deutsch</span>)</label>
+                    <textarea class="form-control" rows="4" id="outofplanDescription"
+                        placeholder="Beschreibung eingeben..."></textarea>
+                </div>
+                <div class="d-flex gap-2 mt-4">
+                    <button class="btn btn-outline-secondary flex-fill" onclick="cancelOutofplan()">
+                        <i class="bi bi-x-circle"></i> Abbrechen
+                    </button>
+                    <button class="btn btn-primary flex-fill" id="saveOutofplanBtn" onclick="saveOutofplan()">
+                        <i class="bi bi-check-circle"></i> Speichern
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4" id="app"></div>
+
+<script src="/js/configIframe/config_Iframe.js?v=UserAwareFixed"></script>
+
+{{> footer}}

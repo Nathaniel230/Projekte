@@ -1,0 +1,52 @@
+{{> navigation}}
+
+<link rel="stylesheet" href="/css/custom.css">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-11 col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Bestellhistorie</h3>
+                    <span class="text-muted" style="font-size: 0.9rem;">Ihre bisherigen Bestellungen</span>
+                </div>
+                <div class="card-body">
+                    {{#if error}}
+                        <div class="alert alert-danger" role="alert">{{error}}</div>
+                    {{/if}}
+
+                    {{#if orders.length}}
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Bestellnummer</th>
+                                        <th scope="col">Datum</th>
+                                        <th scope="col">Summe</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Artikel</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each orders}}
+                                    <tr>
+                                        <td><strong>{{formattedOrderId}}</strong></td>
+                                        <td>{{dateFormatted}}</td>
+                                        <td>{{totalFormatted}}</td>
+                                        <td><span class="{{statusClass}}">{{status}}</span></td>
+                                        <td>{{itemNames}}</td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    {{else}}
+                        <div class="text-center py-4 text-muted">Noch keine Bestellungen vorhanden.</div>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> footer}}

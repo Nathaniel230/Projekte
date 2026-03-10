@@ -1,0 +1,131 @@
+{{> navigation}}
+
+<link rel="stylesheet" href="/css/custom.css">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Datenverwaltung</h3>
+                </div>
+                <div class="card-body">
+                    {{#if success}}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>{{success}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {{/if}}
+                    
+                    {{#if error}}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{error}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {{/if}}
+                    
+                    <form method="POST" action="/user/datenverwaltung">
+                        
+                        <h5 class="mb-3">Kontoinformationen</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{user.name}}" placeholder="Ihr Name">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">E-Mail *</label>
+                                <input type="email" class="form-control" id="email" name="Email" value="{{user.email}}" readonly>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="created_at" class="form-label">Registriert seit</label>
+                                <input type="text" class="form-control" id="created_at" name="Created_at" value="{{user.createdAt}}" readonly>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="isAdmin" class="form-label">Status</label>
+                                <input type="text" class="form-control" id="isAdmin" value="{{#if user.isAdmin}}Administrator{{else}}Benutzer{{/if}}" readonly>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h5 class="mb-3">Adressdaten</h5>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="street" class="form-label">Strasse und Hausnummer *</label>
+                                <input type="text" class="form-control" id="street" name="StreetAndHousenumber" value="{{user.StreetAndHousenumber}}" placeholder="Musterstrasse 10" required>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="plz" class="form-label">PLZ *</label>
+                                <input type="number" class="form-control" id="plz" name="PLZ" value="{{user.PLZ}}" placeholder="8000" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">Stadt *</label>
+                                <input type="text" class="form-control" id="city" name="City" value="{{user.City}}" placeholder="Zürich" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="country" class="form-label">Land *</label>
+                                <input type="text" class="form-control" id="country" name="Country" value="{{user.Country}}" placeholder="Schweiz" required>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h5 class="mb-3">Website & Standort</h5>
+                        <div class="mb-3">
+                            <label for="url" class="form-label">Website URL *</label>
+                            <input type="url" class="form-control" id="url" name="URL" value="{{user.URL}}" placeholder="https://ihre-website.ch" required>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="coordinates_x" class="form-label">Koordinaten X (Breitengrad) *</label>
+                                <input type="number" step="0.0001" class="form-control" id="coordinates_x" name="Coordinates_x" value="{{user.Coordinates_x}}" placeholder="47.3769" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="coordinates_y" class="form-label">Koordinaten Y (Längengrad) *</label>
+                                <input type="number" step="0.0001" class="form-control" id="coordinates_y" name="Coordinates_y" value="{{user.Coordinates_y}}" placeholder="8.5417" required>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <h5 class="mb-3">Passwort ändern</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="currentPassword" class="form-label">Aktuelles Passwort</label>
+                                <input type="password" class="form-control" id="currentPassword" name="currentPassword">
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="newPassword" class="form-label">Neues Passwort</label>
+                                <input type="password" class="form-control" id="newPassword" name="newPassword">
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="confirmPassword" class="form-label">Passwort bestatigen</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Änderungen speichern</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> footer}}

@@ -1,0 +1,305 @@
+/* Home Page Styling - Einfaches Design */
+
+/* Hero Section - ursprüngliche Styles */
+.hero-image {
+    height: 150px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Step Numbers - ursprüngliches Design */
+.step-number {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.step-number span {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    color: #6c757d;
+}
+
+.hero-image::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="60" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+    animation: float 20s infinite linear;
+}
+
+@keyframes float {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.cta-button {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+    background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+}
+
+/* How it works Section */
+.how-it-works {
+    padding: 80px 0;
+    background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.section-title {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 60px;
+}
+
+.step-container {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.step-number {
+    width: 80px;
+    height: 80px;
+    color: #6c757d;
+    border: 2px solid #6c757d;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 auto 25px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.step-container:hover .step-number {
+    transform: translateY(-5px);
+}
+
+.step-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.step-card {
+    background: white;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.step-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.step-card:hover::before {
+    transform: scaleX(1);
+}
+
+.step-card .card-body {
+    padding: 30px;
+}
+
+.step-card .card-title {
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Connection Lines */
+.step-container:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(180deg, #667eea, transparent);
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+@media (min-width: 768px) {
+    .step-container:not(:last-child)::after {
+        top: 40px;
+        left: 100%;
+        width: 60px;
+        height: 2px;
+        background: linear-gradient(90deg, #667eea, transparent);
+        transform: translateY(-50%);
+    }
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.faq-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.faq-subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 50px;
+}
+
+.faq-container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.accordion-item {
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accordion-button {
+    background: transparent;
+    border: none;
+    padding: 25px 30px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: none;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border: none;
+}
+
+.accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23667eea'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    transition: transform 0.3s ease;
+}
+
+.accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='white'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    transform: rotate(180deg);
+}
+
+.accordion-body {
+    padding: 25px 30px;
+    color: #6c757d;
+    line-height: 1.7;
+    background: #f8f9fa;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+    }
+
+    .how-it-works {
+        padding: 60px 0;
+    }
+
+    .faq-section {
+        padding: 60px 0;
+    }
+
+    .hero-content {
+        padding: 30px;
+    }
+
+    .step-number {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}

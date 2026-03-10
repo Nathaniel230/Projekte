@@ -1,0 +1,135 @@
+{{> navigation}}
+
+<link rel="stylesheet" href="/css/custom.css">
+    
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card shadow">
+                    <div class="card-header bg-warning text-dark">
+                        <h3 class="mb-0">Kunde bearbeiten</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/admin/kundenanzeige/edit/{{customer._id}}">
+                            
+                            <h5 class="mb-3">Kontoinformationen</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Name *</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{customer.name}}" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">E-Mail *</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{customer.email}}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="role" class="form-label">Rolle *</label>
+                                    <select class="form-select" id="role" name="role" required>
+                                        <option value="user" {{#if (eq customer.role 'user')}}selected{{/if}}>Kunde</option>
+                                        <option value="admin" {{#if (eq customer.role 'admin')}}selected{{/if}}>Admin</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="created_at" class="form-label">Registriert seit</label>
+                                    <input type="text" class="form-control" id="created_at" value="{{formatDate customer.createdAt}}" readonly>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <h5 class="mb-3">Abonnement & Zahlung</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="subscriptionStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="subscriptionStatus" name="subscriptionStatus">
+                                        <option value="">Kein Abo</option>
+                                        <option value="active" {{#if (eq customer.subscriptionStatus 'active')}}selected{{/if}}>Aktiv</option>
+                                        <option value="canceled" {{#if (eq customer.subscriptionStatus 'canceled')}}selected{{/if}}>Gekündigt</option>
+                                        <option value="expired" {{#if (eq customer.subscriptionStatus 'expired')}}selected{{/if}}>Abgelaufen</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="subscriptionEndDate" class="form-label">Ablaufdatum</label>
+                                    <input type="date" class="form-control" id="subscriptionEndDate" name="subscriptionEndDate" 
+                                           value="{{#if customer.subscriptionEndDate}}{{formatDateInput customer.subscriptionEndDate}}{{/if}}">
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label d-block">Bezahlt</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="isPaid" name="isPaid" 
+                                               {{#if customer.isPaid}}checked{{/if}}>
+                                        <label class="form-check-label" for="isPaid">
+                                            Kunde hat bezahlt
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <h5 class="mb-3">Adressdaten</h5>
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="street" class="form-label">Strasse und Hausnummer</label>
+                                    <input type="text" class="form-control" id="street" name="StreetAndHousenumber" value="{{customer.StreetAndHousenumber}}">
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="plz" class="form-label">PLZ</label>
+                                    <input type="number" class="form-control" id="plz" name="PLZ" value="{{customer.PLZ}}">
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="form-label">Stadt</label>
+                                    <input type="text" class="form-control" id="city" name="City" value="{{customer.City}}">
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="country" class="form-label">Land</label>
+                                    <input type="text" class="form-control" id="country" name="Country" value="{{customer.Country}}">
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <h5 class="mb-3">Website & Standort</h5>
+                            <div class="mb-3">
+                                <label for="url" class="form-label">Website URL</label>
+                                <input type="url" class="form-control" id="url" name="URL" value="{{customer.URL}}">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="coordinates_x" class="form-label">Koordinaten X (Breitengrad)</label>
+                                    <input type="number" step="0.0001" class="form-control" id="coordinates_x" name="Coordinates_x" value="{{customer.Coordinates_x}}">
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="coordinates_y" class="form-label">Koordinaten Y (Längengrad)</label>
+                                    <input type="number" step="0.0001" class="form-control" id="coordinates_y" name="Coordinates_y" value="{{customer.Coordinates_y}}">
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success flex-fill">Änderungen speichern</button>
+                                <a href="/admin/kundenanzeige" class="btn btn-secondary">Abbrechen</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {{> footer}}

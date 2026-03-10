@@ -1,0 +1,347 @@
+/* testIframe.css - CSS-only iFrame styling ohne JavaScript */
+
+/* Base Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8f9fa;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    /* Verhindert Scrollbalken im iFrame */
+}
+
+/* iFrame Container */
+.iframe-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 15px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* Status Card */
+.status-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 2px solid;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Status Open (Grün) */
+.status-open {
+    border-color: #2dbd69;
+    background: linear-gradient(180deg, #ebfff1 0%, #e6fff0 100%);
+    box-shadow: 0 8px 30px rgba(10, 107, 50, 0.08);
+}
+
+.status-open .status-header h3 {
+    color: #0a6b32;
+    -webkit-text-fill-color: initial;
+    background-clip: none;
+}
+
+/* Status Closed (Rot) */
+.status-closed {
+    border-color: #dc3545;
+    background: linear-gradient(135deg, #ffffff 0%, #fff8f8 100%);
+}
+
+.status-closed .status-header h3 {
+    color: #dc3545;
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Status Header */
+.status-header {
+    text-align: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+}
+
+.status-header h3 {
+    font-size: 1.8em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/* Status icon before title to improve readability */
+.status-header h3::before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.status-open .status-header h3::before {
+    background: linear-gradient(180deg, #28a745, #20c997);
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.08) inset;
+}
+
+.status-closed .status-header h3::before {
+    background: linear-gradient(180deg, #dc3545, #e74c3c);
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.08) inset;
+}
+
+/* Status Details */
+.status-details {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.status-details p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #495057;
+    font-weight: 500;
+}
+
+.next-open,
+.closes-at {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.today-hours {
+    color: #0a6b32;
+    font-weight: 700;
+}
+
+/* CSS-only Dropdown mit details/summary */
+.schedule-dropdown {
+    width: 100%;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #f8f9fa;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.schedule-dropdown summary {
+    padding: 12px 15px;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    color: #495057;
+    border: none;
+    outline: none;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    user-select: none;
+    -webkit-appearance: none; /* Remove native control appearance */
+    appearance: none;
+}
+
+.schedule-dropdown summary:hover {
+    background: #e9ecef;
+}
+
+.schedule-dropdown summary::-webkit-details-marker {
+    /* Chrome/Safari */
+    display: none;
+}
+
+.schedule-dropdown summary::marker {
+    /* Hide marker where supported */
+    content: none;
+}
+
+.schedule-dropdown summary::-moz-list-bullet {
+    /* Firefox */
+    display: none;
+}
+
+.schedule-dropdown summary::after {
+    content: "\25BE";
+    /* ▾ triangle glyph, consistent cross-browser */
+    font-size: 14px;
+    display: inline-block;
+    margin-left: 8px;
+    transition: transform 0.25s ease, color 0.15s ease;
+    color: #6c757d;
+}
+
+.schedule-dropdown[open] summary::after {
+    transform: rotate(180deg);
+    color: #0a6b32;
+}
+
+.schedule-dropdown[open] {
+    border-color: #2dbd69;
+    box-shadow: 0 2px 8px rgba(45, 189, 105, 0.12);
+}
+
+/* Weekly Schedule */
+.weekly-schedule {
+    background: white;
+    padding: 15px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Day Rows */
+.day-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f3f4;
+    font-size: 13px;
+}
+
+/* subtle hover highlight for each day in the schedule */
+.day-row:hover {
+    background: #f1f3f4;
+    border-radius: 6px;
+}
+
+.day-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.day-label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 80px;
+}
+
+.day-hours {
+    color: #6c757d;
+    font-weight: 500;
+    text-align: right;
+}
+
+/* Spezielle Styling für Sonntag (geschlossen) */
+.day-row:last-child .day-hours {
+    color: #dc3545;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .iframe-container {
+        padding: 10px;
+    }
+
+    .status-card {
+        padding: 15px;
+        max-width: 100%;
+    }
+
+    .status-header h3 {
+        font-size: 1.5em;
+    }
+
+    .day-row {
+        font-size: 12px;
+    }
+
+    .day-label {
+        min-width: 70px;
+    }
+}
+
+@media (max-width: 360px) {
+    .status-card {
+        padding: 12px;
+    }
+
+    .status-header h3 {
+        font-size: 1.3em;
+    }
+
+    .day-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+
+    .day-hours {
+        text-align: left;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .schedule-dropdown {
+        border: 1px solid #000;
+    }
+
+    .schedule-dropdown summary {
+        display: none;
+    }
+
+    .weekly-schedule {
+        display: block !important;
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .status-card {
+        border-width: 3px;
+    }
+
+    .status-header h3 {
+        -webkit-text-fill-color: initial;
+    }
+
+    .schedule-dropdown {
+        border-width: 2px;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .status-card {
+        transition: none;
+    }
+
+    .schedule-dropdown summary::after {
+        transition: none;
+    }
+
+    .weekly-schedule {
+        animation: none;
+    }
+}
